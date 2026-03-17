@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>Media Upload</title>
+
+    ```
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            font-family: Arial;
+            text-align: center;
+            background: #f5f5f5;
+        }
+
+        h2 {
+            margin-top: 20px;
+        }
+
+        input {
+            margin: 10px;
+        }
+
+        button {
+            padding: 6px 12px;
+            cursor: pointer;
+        }
+
+        .gallery {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .card {
+            margin: 10px;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .card img,
+        .card video {
+            width: 200px;
+            border-radius: 6px;
+        }
+
+        .card button {
+            margin-top: 5px;
+            background: red;
+            color: white;
+            border: none;
+        }
+    </style>
+    ```
+
+</head>
+
+<body>
+
+    ```
+    <h2>Upload Image / Video</h2>
+
+    <input type="file" id="fileInput" accept="image/*,video/*">
+    <button onclick="uploadFile()">Upload</button>
+
+    <h2>Gallery</h2>
+    <div class="gallery" id="gallery"></div>
+
+    <script>
+        const API = "http://localhost:5000";
+
+        async function uploadFile() {
+            const file = document.getElementById("fileInput").files[0];
+
+            if (!file) {
+                alert("Please select a file");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append("file", file);
+
+            try {
+                await fetch(API + "/upload", {
+                    method: "POST",
+                    body: formData
+                });
+
+                alert("Upload successful");
+                loadFiles();
+
+            } catch (err) {
+                alert("Upload failed");
+                console.error(err);
+            }
+        }
+
+        async function loadFiles() {
+            const res = await fetch(API + "/files");
+            const files = await res.json();
+
+            const gallery = document.getElementById("gallery");
+            gallery.innerHTML = "";
+
+            files.forEach(file => {
+                const isVideo = file.key.match(/\.(mp4|webm|ogg)$/i);
+
+                const div = document.createElement("div");
+                div.className = "card";
+
+                const safeUrl = encodeURI(file.url); // ✅ IMPORTANT FIX
+
+                div.innerHTML = `
+                ${isVideo
+                        ? `<video src="${safeUrl}" controls></video>`
+                        : `<img src="${safeUrl}" />`
+                    }
+                <button onclick="downloadFile('${file.key}')">Download</button>
+                <button onclick="deleteFile('${file.key}')">Delete</button>
+            `;
+
+                gallery.appendChild(div);
+            });
+        }
+
+        async function deleteFile(key) {
+            const confirmDelete = confirm("Delete this file?");
+            if (!confirmDelete) return;
+
+            try {
+                await fetch(`${API}/delete?key=${encodeURIComponent(key)}`, {
+                    method: "DELETE"
+                });
+
+                loadFiles();
+
+            } catch (err) {
+                alert("Delete failed");
+                console.error(err);
+            }
+        }
+
+        // async function downloadFile(key) {
+        //     const url = `${API}/file?key=${encodeURIComponent(key)}`;
+
+        //     const a = document.createElement("a");
+        //     a.href = url;
+        //     a.download = key; // file name
+        //     document.body.appendChild(a);
+        //     a.click();
+        //     document.body.removeChild(a);
+        // }
+
+        function downloadFile(key) {
+            window.open(`${API}/file?key=${encodeURIComponent(key)}&download=true`);
+        }
+        loadFiles();
+    </script>
+    ```
+
+</body>
+
+</html>
