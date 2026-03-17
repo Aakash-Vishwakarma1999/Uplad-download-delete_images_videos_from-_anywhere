@@ -150,6 +150,15 @@
     <input type="file" id="fileInput" accept="image/*,video/*" multiple>
     <button onclick="uploadFile()">Upload</button>
 
+    <div id="progressContainer" style="width:90%;max-width:300px;margin:10px auto;display:none;">
+        <div style="background:#ddd;border-radius:10px;overflow:hidden;">
+            <div id="progressBar"
+                style="height:20px;width:0%;background:#28a745;color:white;font-size:12px;line-height:20px;">
+                0%
+            </div>
+        </div>
+    </div>
+
     <h2>Gallery</h2>
     <div class="gallery" id="gallery"></div>
 
@@ -184,7 +193,41 @@
         // }
 
 
-        async function uploadFile() {
+        // async function uploadFile() {
+        //     const input = document.getElementById("fileInput");
+        //     const files = input.files;
+
+        //     if (!files || files.length === 0) {
+        //         alert("Please select files");
+        //         return;
+        //     }
+
+        //     const formData = new FormData();
+
+        //     // 🔥 append ALL files
+        //     for (let i = 0; i < files.length; i++) {
+        //         formData.append("files", files[i]);
+        //     }
+
+        //     try {
+        //         const res = await fetch(API + "/upload", {
+        //             method: "POST",
+        //             body: formData
+        //         });
+
+        //         const data = await res.text();
+        //         console.log(data);
+
+        //         alert("Upload done");
+        //         loadFiles();
+
+        //     } catch (err) {
+        //         console.error(err);
+        //         alert("Upload failed");
+        //     }
+        // }
+
+        function uploadFile() {
             const input = document.getElementById("fileInput");
             const files = input.files;
 
@@ -195,27 +238,53 @@
 
             const formData = new FormData();
 
-            // 🔥 append ALL files
             for (let i = 0; i < files.length; i++) {
                 formData.append("files", files[i]);
             }
 
-            try {
-                const res = await fetch(API + "/upload", {
-                    method: "POST",
-                    body: formData
-                });
+            const xhr = new XMLHttpRequest();
 
-                const data = await res.text();
-                console.log(data);
+            xhr.open("POST", API + "/upload", true);
 
-                alert("Upload done");
-                loadFiles();
+            // ✅ Show progress container
+            const progressContainer = document.getElementById("progressContainer");
+            const progressBar = document.getElementById("progressBar");
 
-            } catch (err) {
-                console.error(err);
-                alert("Upload failed");
-            }
+            progressContainer.style.display = "block";
+
+            // ✅ Track upload progress
+            xhr.upload.onprogress = function (e) {
+                if (e.lengthComputable) {
+                    const percent = Math.round((e.loaded / e.total) * 100);
+                    progressBar.style.width = percent + "%";
+                    progressBar.innerText = percent + "%";
+                }
+            };
+
+            // ✅ On success
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    progressBar.style.width = "100%";
+                    progressBar.innerText = "Upload Complete 🎉";
+
+                    setTimeout(() => {
+                        progressContainer.style.display = "none";
+                        progressBar.style.width = "0%";
+                        progressBar.innerText = "0%";
+                    }, 1500);
+
+                    loadFiles();
+                } else {
+                    alert("Upload failed");
+                }
+            };
+
+            // ❌ On error
+            xhr.onerror = function () {
+                alert("Upload error");
+            };
+
+            xhr.send(formData);
         }
 
 
