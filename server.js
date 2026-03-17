@@ -27,32 +27,63 @@ const s3 = new AWS.S3({
 // =======================
 // 📤 UPLOAD FILE
 // =======================
-app.post("/upload", upload.single("file"), async (req, res) => {
-    try {
-        const file = req.file;
+// app.post("/upload", upload.array("file",200), async (req, res) => {
+//     try {
+//         const file = req.file;
 
-        if (!file) {
-            return res.status(400).send("No file uploaded");
+//         if (!file) {
+//             return res.status(400).send("No file uploaded");
+//         }
+
+//         const cleanName = file.originalname.replace(/\s+/g, "_");
+
+//         const params = {
+//             Bucket: BUCKET,
+//             Key: Date.now() + "-" + cleanName,
+//             Body: file.buffer,
+//             ContentType: file.mimetype
+//         };
+
+//         await s3.upload(params).promise();
+
+//         res.send({ message: "Upload successful" });
+
+//     } catch (err) {
+//         console.error(err);
+//         res.status(500).send("Upload failed");
+//     }
+// });
+
+
+app.post("/upload", upload.array("files", 200), async (req, res) => {
+    try {
+        const files = req.files;
+
+        if (!files || files.length === 0) {
+            return res.status(400).send("No files uploaded");
         }
 
-        const cleanName = file.originalname.replace(/\s+/g, "_");
+        for (const file of files) {
+            const cleanName = file.originalname.replace(/\s+/g, "_");
 
-        const params = {
-            Bucket: BUCKET,
-            Key: Date.now() + "-" + cleanName,
-            Body: file.buffer,
-            ContentType: file.mimetype
-        };
+            const params = {
+                Bucket: BUCKET,
+                Key: Date.now() + "-" + cleanName,
+                Body: file.buffer,
+                ContentType: file.mimetype
+            };
 
-        await s3.upload(params).promise();
+            await s3.upload(params).promise();
+        }
 
-        res.send({ message: "Upload successful" });
+        res.send({ message: "All files uploaded successfully" });
 
     } catch (err) {
         console.error(err);
         res.status(500).send("Upload failed");
     }
 });
+
 
 
 // =======================
