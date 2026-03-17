@@ -59,85 +59,85 @@
     ```
 
     <style>
-    body {
-        font-family: Arial;
-        text-align: center;
-        background: #f5f5f5;
-        margin: 0;
-        padding: 10px;
-    }
+        body {
+            font-family: Arial;
+            text-align: center;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 10px;
+        }
 
-    h2 {
-        margin-top: 15px;
-        font-size: 20px;
-    }
-
-    input {
-        margin: 10px 5px;
-        width: 90%;
-        max-width: 300px;
-    }
-
-    button {
-        padding: 8px 14px;
-        cursor: pointer;
-        border-radius: 6px;
-        border: none;
-        background: #007bff;
-        color: white;
-        margin: 5px;
-    }
-
-    button:hover {
-        opacity: 0.9;
-    }
-
-    .gallery {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-        gap: 10px;
-        padding: 10px;
-    }
-
-    .card {
-        padding: 8px;
-        background: white;
-        border-radius: 10px;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-    }
-
-    .card img,
-    .card video {
-        width: 100%;
-        height: auto;
-        border-radius: 6px;
-    }
-
-    .card button {
-        width: 100%;
-        margin-top: 5px;
-        font-size: 12px;
-    }
-
-    .card button:first-of-type {
-        background: #28a745;
-    }
-
-    .card button:last-of-type {
-        background: red;
-    }
-
-    /* 📱 Extra mobile optimization */
-    @media (max-width: 480px) {
         h2 {
-            font-size: 18px;
+            margin-top: 15px;
+            font-size: 20px;
+        }
+
+        input {
+            margin: 10px 5px;
+            width: 90%;
+            max-width: 300px;
         }
 
         button {
-            width: 100%;
+            padding: 8px 14px;
+            cursor: pointer;
+            border-radius: 6px;
+            border: none;
+            background: #007bff;
+            color: white;
+            margin: 5px;
         }
-    }
-</style>
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+            padding: 10px;
+        }
+
+        .card {
+            padding: 8px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+        }
+
+        .card img,
+        .card video {
+            width: 100%;
+            height: auto;
+            border-radius: 6px;
+        }
+
+        .card button {
+            width: 100%;
+            margin-top: 5px;
+            font-size: 12px;
+        }
+
+        .card button:first-of-type {
+            background: #28a745;
+        }
+
+        .card button:last-of-type {
+            background: red;
+        }
+
+        /* 📱 Extra mobile optimization */
+        @media (max-width: 480px) {
+            h2 {
+                font-size: 18px;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
 
 
 </head>
@@ -157,31 +157,69 @@
         //const API = "http://localhost:5000";
         const API = "https://kokan-backend.onrender.com";
 
-        async function uploadFile() {
-            const file = document.getElementById("fileInput").files[0];
+        // async function uploadFile() {
+        //     const file = document.getElementById("fileInput").files[0];
 
-            if (!file) {
-                alert("Please select a file");
+        //     if (!file) {
+        //         alert("Please select a file");
+        //         return;
+        //     }
+
+        //     const formData = new FormData();
+        //     formData.append("files", file);
+
+        //     try {
+        //         await fetch(API + "/upload", {
+        //             method: "POST",
+        //             body: formData
+        //         });
+
+        //         alert("Upload successful");
+        //         loadFiles();
+
+        //     } catch (err) {
+        //         alert("Upload failed");
+        //         console.error(err);
+        //     }
+        // }
+
+
+        async function uploadFile() {
+            const input = document.getElementById("fileInput");
+            const files = input.files;
+
+            if (!files || files.length === 0) {
+                alert("Please select files");
                 return;
             }
 
             const formData = new FormData();
-            formData.append("files", file);
+
+            // 🔥 append ALL files
+            for (let i = 0; i < files.length; i++) {
+                formData.append("files", files[i]);
+            }
 
             try {
-                await fetch(API + "/upload", {
+                const res = await fetch(API + "/upload", {
                     method: "POST",
                     body: formData
                 });
 
-                alert("Upload successful");
+                const data = await res.text();
+                console.log(data);
+
+                alert("Upload done");
                 loadFiles();
 
             } catch (err) {
-                alert("Upload failed");
                 console.error(err);
+                alert("Upload failed");
             }
         }
+
+
+
 
         async function loadFiles() {
             const res = await fetch(API + "/files");
