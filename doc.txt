@@ -1,0 +1,3 @@
+cloud storage account is on: https://ap1.storj.io/projects/21Hy1XAATVu/buckets
+
+and backend is deployed on : render
