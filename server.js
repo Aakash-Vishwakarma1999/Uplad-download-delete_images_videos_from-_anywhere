@@ -54,7 +54,7 @@ const s3 = new AWS.S3({
 //     }
 // });
 
-app.post("/upload", upload.array("files", 200), async (req, res) => {
+app.post("/upload", upload.array("files", 1000), async (req, res) => {
     console.log("FILES RECEIVED:", req.files);
     console.log("FILES COUNT:", req.files ? req.files.length : 0);
     try {
