@@ -1,3 +1,5 @@
 cloud storage account is on: https://ap1.storj.io/projects/21Hy1XAATVu/buckets
+the access keys for this account are encoded using env file which is on desktop in offline mode and the acess keys are synched with the backend by putting them 
+in backend server.
 
 and backend is deployed on : render
