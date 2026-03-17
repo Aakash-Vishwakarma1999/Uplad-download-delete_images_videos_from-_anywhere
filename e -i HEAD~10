@@ -1,0 +1,19 @@
+[33m32133c1[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m HEAD@{0}: reset: moving to HEAD~3
+[33m82c6f67[m HEAD@{1}: reset: moving to HEAD~5
+[33mb4d236e[m[33m ([m[1;31morigin/main[m[33m)[m HEAD@{2}: commit: reversed upload function
+[33m65b9665[m HEAD@{3}: commit: reversed upload function
+[33m3262a51[m HEAD@{4}: commit: added heic conversion
+[33mf90432c[m HEAD@{5}: commit: added heic conversion
+[33me42b78b[m HEAD@{6}: commit: added heic conversion
+[33m82c6f67[m HEAD@{7}: commit: added progressbar
+[33m4cfc5c4[m HEAD@{8}: commit: added progressbar
+[33m6ea3cde[m HEAD@{9}: commit: console log upload count check
+[33m32133c1[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m HEAD@{10}: commit: frontend changes
+[33m7825191[m HEAD@{11}: commit: Enabled multiple file upload frontend
+[33m78b70ac[m HEAD@{12}: commit: Enabled multiple file upload frontend
+[33m0d3a623[m HEAD@{13}: commit: can upload multiple files
+[33md6ef9db[m HEAD@{14}: pull --tags origin main: Merge made by the 'ort' strategy.
+[33m03d73a8[m HEAD@{15}: commit: improved css
+[33m0318163[m HEAD@{16}: commit: Secured backend with env variables
+[33m055c3b8[m HEAD@{17}: Branch: renamed refs/heads/master to refs/heads/main
+[33m055c3b8[m HEAD@{19}: commit (initial): Initial clean commit
