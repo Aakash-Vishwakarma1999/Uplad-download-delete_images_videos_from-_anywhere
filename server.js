@@ -54,7 +54,6 @@ const s3 = new AWS.S3({
 //     }
 // });
 
-
 app.post("/upload", upload.array("files", 200), async (req, res) => {
     try {
         const files = req.files;
@@ -63,18 +62,20 @@ app.post("/upload", upload.array("files", 200), async (req, res) => {
             return res.status(400).send("No files uploaded");
         }
 
-        for (const file of files) {
+        const uploadPromises = files.map(file => {
             const cleanName = file.originalname.replace(/\s+/g, "_");
 
             const params = {
                 Bucket: BUCKET,
-                Key: Date.now() + "-" + cleanName,
+                Key: Date.now() + "-" + Math.random().toString(36).substring(7) + "-" + cleanName,
                 Body: file.buffer,
                 ContentType: file.mimetype
             };
 
-            await s3.upload(params).promise();
-        }
+            return s3.upload(params).promise();
+        });
+
+        await Promise.all(uploadPromises);
 
         res.send({ message: "All files uploaded successfully" });
 
